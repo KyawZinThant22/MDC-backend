@@ -28,11 +28,11 @@ const handleUserError = (err) => {
   return errors;
   e;
 };
-
+console.log(process.env.SECRET);
 //create token
 const maxAge = 3 * 24 * 60 * 60;
 const createToken = (id) => {
-  return jwt.sign({ id }, "WDC", { expiresIn: maxAge });
+  return jwt.sign({ id }, process.env.SECRET, { expiresIn: maxAge });
 };
 
 //controller actions
@@ -43,12 +43,11 @@ exports.Signup = async (req, res) => {
     const user = await User.signup(email, password, userName);
 
     //create a token
-    const token = createToken(user._id);
-
-    res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
+    const token = createToken(user);
     res.status(201).json({
       status: "success",
-      user,
+      token: token,
+      data: user,
     });
   } catch (err) {
     // const error = handleUserError(err);
