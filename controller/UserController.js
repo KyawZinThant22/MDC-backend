@@ -2,7 +2,7 @@ const User = require("../model/User");
 const jwt = require("jsonwebtoken");
 
 const handleUserError = (err) => {
-  let errors = { email: "", password: "" };
+  let errors = { email: "", password: "", userName: "" };
 
   //incorrect email
   if (err.message === "incorrect email") {
@@ -38,20 +38,23 @@ const createToken = (id) => {
 //controller actions
 
 exports.Signup = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, userName } = req.body;
   try {
-    const user = await User.create({ email, password });
+    const user = await User.signup(email, password, userName);
+
+    //create a token
     const token = createToken(user._id);
+
     res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
     res.status(201).json({
       status: "success",
       user,
     });
   } catch (err) {
-    const error = handleUserError(err);
+    // const error = handleUserError(err);
     res.status(404).json({
       status: "fail",
-      message: error,
+      message: err.message,
     });
   }
 };
