@@ -43,6 +43,6 @@ userSchema.statics.signup = async function (email, password, userName) {
   return user;
 };
 
-const User = mongoose.model("user", userSchema);
+const User = mongoose.model("User", userSchema);
 
 module.exports = User;
